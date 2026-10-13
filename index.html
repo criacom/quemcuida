@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quem Cuida do Cuidador — protocolo de saúde mental para clínicas veterinárias</title>
+<meta name="description" content="Projeto de extensão da UEL com a ELO Empresa Júnior de Psicologia: observar, intervir e medir de novo dentro da clínica veterinária, com protocolo construído junto com a equipe.">
+<meta property="og:title" content="Quem Cuida do Cuidador">
+<meta property="og:description" content="Segurança em saúde mental do trabalhador em clínicas veterinárias. UEL + ELO Empresa Júnior de Psicologia.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2307110F'/><circle cx='16' cy='16' r='9' fill='none' stroke='%233DDCA8' stroke-width='2.5'/><circle cx='16' cy='7' r='3.2' fill='%23FFC45A'/></svg>">
+
+<style>
+/* ==========================================================
+   Quem Cuida do Cuidador — versão interativa.
+   Arquivo único, sem bibliotecas externas.
+   Base escura + brilho esmeralda; âmbar só em acento.
+   Texto curto: cada afirmação leva um chip que aponta
+   para a referência no fim da página.
+   ========================================================== */
+
+:root{
+  color-scheme: only dark;
+
+  --fundo:      #07110F;
+  --fundo-2:    #0B1A17;
+  --superf:     rgba(255,255,255,.045);
+  --superf-2:   rgba(255,255,255,.075);
+  --borda:      rgba(130,200,180,.17);
+  --borda-forte:rgba(130,200,180,.38);
+
+  --menta:      #3DDCA8;
+  --menta-esc:  #15B98F;
+  --ambar:      #FFC45A;
+  --coral:      #FF8A6B;
+
+  --texto:      #E2F0EB;
+  --suave:      #93ABA4;
+
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --serif: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+
+  --raio: 14px;
+  --larg: 1160px;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+html{overflow-x:clip}
+body{
+  margin:0;background:var(--fundo);color:var(--texto);
+  font-family:var(--sans);font-size:17px;line-height:1.6;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.035em;line-height:1.05}
+h1{font-size:clamp(2.6rem,7.4vw,5.2rem)}
+h2{font-size:clamp(1.9rem,4.4vw,3.1rem);letter-spacing:-.032em}
+h3{font-size:1.12rem;font-weight:700;letter-spacing:-.018em;line-height:1.28}
+p{margin:0 0 1em}
+a{color:var(--menta);text-underline-offset:3px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2.5px solid var(--menta);outline-offset:3px;border-radius:6px}
+
+.wrap{width:100%;max-width:var(--larg);margin:0 auto;padding:0 clamp(18px,4.5vw,40px);position:relative;z-index:2}
+section[id]{scroll-margin-top:80px}
+.secao{padding:clamp(64px,9vw,128px) 0;position:relative;overflow:hidden}
+
+/* --- barra de progresso de leitura ------------------------ */
+.progresso{position:fixed;inset:0 auto auto 0;height:2px;width:0;z-index:60;
+  background:linear-gradient(90deg,var(--menta-esc),var(--menta),var(--ambar));
+  box-shadow:0 0 14px rgba(61,220,168,.75)}
+
+/* --- topo ------------------------------------------------- */
+.topo{position:sticky;top:0;z-index:50;background:rgba(7,17,15,.72);
+  backdrop-filter:blur(14px) saturate(1.5);border-bottom:1px solid rgba(130,200,180,.12)}
+.topo-in{display:flex;align-items:center;gap:20px;min-height:64px}
+.marca{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.98rem;
+  letter-spacing:-.02em;text-decoration:none;color:var(--texto)}
+.marca svg{flex:none;filter:drop-shadow(0 0 9px rgba(61,220,168,.6))}
+.menu{margin-left:auto;display:flex;gap:4px;align-items:center}
+.menu a{font-size:.87rem;font-weight:500;color:var(--suave);text-decoration:none;
+  padding:8px 12px;border-radius:8px}
+.menu a:hover{color:var(--texto);background:var(--superf)}
+.menu .destaque{color:#07110F;background:var(--menta);font-weight:700;margin-left:8px;
+  box-shadow:0 0 22px rgba(61,220,168,.38)}
+.menu .destaque:hover{background:#5BEEC0;color:#07110F}
+@media(max-width:880px){.menu a:not(.destaque){display:none}}
+@media(max-width:560px){
+  .marca .nome{display:none}
+  .menu .destaque{padding:10px 16px;font-size:.85rem}
+  .topo-in{min-height:56px}
+}
+
+/* --- brilhos de fundo ------------------------------------- */
+.brilho{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0}
+.b1{width:620px;height:620px;background:rgba(21,185,143,.22);top:-230px;left:-160px}
+.b2{width:520px;height:520px;background:rgba(255,196,90,.12);top:120px;right:-200px}
+.b3{width:560px;height:560px;background:rgba(21,185,143,.11);bottom:-260px;left:30%}
+
+/* --- herói ------------------------------------------------ */
+.heroi{position:relative;overflow:hidden;padding:clamp(56px,8vw,104px) 0 clamp(50px,7vw,88px);
+  border-bottom:1px solid rgba(130,200,180,.12)}
+.heroi::before{/* malha fina: ficha de registro */
+  content:"";position:absolute;inset:0;z-index:0;opacity:.55;
+  background-image:linear-gradient(rgba(130,200,180,.06) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(130,200,180,.06) 1px,transparent 1px);
+  background-size:30px 30px;
+  mask-image:radial-gradient(ellipse 85% 70% at 50% 35%,#000 35%,transparent 100%);
+  -webkit-mask-image:radial-gradient(ellipse 85% 70% at 50% 35%,#000 35%,transparent 100%);
+}
+.heroi::after{/* foco que acompanha o ponteiro */
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(420px circle at var(--mx,70%) var(--my,30%),rgba(61,220,168,.11),transparent 62%);
+  transition:background .25s ease-out;
+}
+.selo{display:inline-flex;align-items:center;gap:9px;font-size:.8rem;font-weight:600;
+  color:var(--menta);border:1px solid var(--borda-forte);border-radius:999px;
+  padding:7px 15px;background:rgba(21,185,143,.09);margin-bottom:26px}
+.selo i{width:7px;height:7px;border-radius:50%;background:var(--menta);
+  box-shadow:0 0 10px var(--menta);font-style:normal}
+@media(prefers-reduced-motion:no-preference){.selo i{animation:pulsa 2.4s ease-in-out infinite}}
+@keyframes pulsa{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
+
+.heroi h1{max-width:15ch}
+.titulo-brilho{
+  background:linear-gradient(104deg,#FFFFFF 8%,#9CF4D8 42%,var(--menta) 62%,#FFD98A 96%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 32px rgba(61,220,168,.28));
+}
+.linha-chamada{font-size:clamp(1.08rem,2.1vw,1.32rem);color:#C6DCD5;max-width:44ch;margin:24px 0 0;line-height:1.5}
+.heroi-grade{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
+  gap:clamp(28px,4vw,56px);align-items:center}
+@media(max-width:940px){.heroi-grade{grid-template-columns:1fr;gap:40px}}
+
+.acoes{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.botao{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:.97rem;
+  padding:14px 24px;border-radius:999px;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease}
+.botao-forte{background:linear-gradient(135deg,var(--menta),var(--menta-esc));color:#06120F;
+  box-shadow:0 0 0 1px rgba(61,220,168,.5),0 10px 34px rgba(21,185,143,.34)}
+.botao-forte:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(61,220,168,.7),0 14px 42px rgba(21,185,143,.5)}
+.botao-leve{border:1px solid var(--borda-forte);color:var(--texto);background:var(--superf)}
+.botao-leve:hover{background:var(--superf-2);transform:translateY(-2px)}
+
+.fatos{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px;padding-top:26px;
+  border-top:1px solid rgba(130,200,180,.14)}
+.fato{font-size:.84rem;color:var(--suave);border:1px solid var(--borda);border-radius:999px;
+  padding:7px 14px;background:rgba(255,255,255,.03)}
+.fato b{color:var(--texto);font-weight:700}
+
+/* --- chip de referência ----------------------------------- */
+.ref{display:inline-block;font-size:.62em;font-weight:800;vertical-align:super;
+  color:#06120F;background:var(--menta);border-radius:5px;padding:1px 5px;margin-left:3px;
+  text-decoration:none;line-height:1.5;transition:box-shadow .16s ease}
+.ref:hover{box-shadow:0 0 14px rgba(61,220,168,.8)}
+
+/* --- rótulo de seção -------------------------------------- */
+.rotulo{display:flex;align-items:center;gap:11px;font-size:.84rem;font-weight:700;
+  color:var(--menta);margin:0 0 16px}
+.rotulo::before{content:"";width:26px;height:2px;background:var(--ambar);flex:none;
+  box-shadow:0 0 10px rgba(255,196,90,.7)}
+.sub{color:var(--suave);max-width:58ch;margin-top:16px;font-size:1.02rem}
+
+/* --- ciclo interativo ------------------------------------- */
+.ciclo-grade{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
+  gap:clamp(26px,4vw,60px);align-items:center;margin-top:48px}
+@media(max-width:900px){.ciclo-grade{grid-template-columns:1fr;gap:34px}}
+.ciclo-svg{width:100%;max-width:420px;margin:0 auto;display:block;overflow:visible}
+.ciclo-svg .trilho{fill:none;stroke:rgba(130,200,180,.2);stroke-width:2}
+.ciclo-svg .arco{fill:none;stroke:var(--menta);stroke-width:4;stroke-linecap:round;
+  stroke-dasharray:198 462;filter:drop-shadow(0 0 10px rgba(61,220,168,.85));
+  transform:rotate(-90deg);transform-box:view-box;transform-origin:190px 190px;
+  transition:transform .55s cubic-bezier(.4,0,.2,1)}
+@media(prefers-reduced-motion:reduce){.ciclo-svg .arco{transition:none}}
+.ciclo-svg .no{cursor:pointer}
+.ciclo-svg .no circle{fill:#0D201C;stroke:rgba(130,200,180,.4);stroke-width:2;transition:all .3s ease}
+.ciclo-svg .no text{font-size:13px;font-weight:800;fill:var(--suave);transition:fill .3s ease}
+.ciclo-svg .no .rot{font-size:15px;font-weight:700;fill:var(--suave)}
+.ciclo-svg .no:hover circle{stroke:var(--menta)}
+.ciclo-svg .no.ativo circle{fill:var(--menta);stroke:var(--menta);
+  filter:drop-shadow(0 0 16px rgba(61,220,168,.95))}
+.ciclo-svg .no.ativo text{fill:#06120F}
+.ciclo-svg .no.ativo .rot{fill:var(--texto)}
+.ciclo-svg .miolo{font-size:12.5px;fill:var(--suave);font-weight:500}
+
+.painel{border:1px solid var(--borda);border-radius:var(--raio);padding:clamp(22px,3vw,34px);
+  background:linear-gradient(160deg,rgba(21,185,143,.09),rgba(255,255,255,.02));
+  box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.painel .passo{display:none}
+.painel .passo.ativo{display:block}
+@media(prefers-reduced-motion:no-preference){.painel .passo.ativo{animation:entra .34s ease-out}}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.painel h3{font-size:1.5rem;letter-spacing:-.03em;margin-bottom:.45em}
+.painel p{color:#C6DCD5;margin-bottom:1em}
+.painel ul{margin:0;padding-left:1.1em;color:var(--suave);font-size:.96rem}
+.painel li{margin-bottom:.45em}
+.passo-num{font-size:.78rem;font-weight:800;color:var(--ambar);margin-bottom:8px;display:block}
+
+/* --- mapa da rotina (cartas clicáveis) -------------------- */
+.mapa{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:14px;margin-top:44px;align-items:start}
+.carta{
+  text-align:left;border:1px solid var(--borda);border-radius:var(--raio);
+  padding:22px;background:var(--superf);position:relative;overflow:hidden;
+  transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.carta::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(260px circle at var(--cx,50%) var(--cy,0%),rgba(61,220,168,.16),transparent 65%);
+  transition:opacity .25s ease}
+.carta:hover{border-color:var(--borda-forte);transform:translateY(-3px);
+  box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.carta:hover::after{opacity:1}
+.carta.aberta{border-color:var(--menta);box-shadow:0 0 0 1px rgba(61,220,168,.3),0 18px 46px rgba(0,0,0,.45)}
+.carta h3{display:flex;align-items:flex-start;gap:10px;min-height:2.6em}
+.carta h3 .mais{margin-left:auto;flex:none;color:var(--menta);font-size:1.2rem;line-height:1;
+  transition:transform .25s ease}
+.carta.aberta h3 .mais{transform:rotate(45deg)}
+.carta .dobra{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+.carta.aberta .dobra{grid-template-rows:1fr}
+.carta .dobra > div{overflow:hidden}
+.carta .dobra p{margin:14px 0 0;font-size:.95rem;color:var(--suave);line-height:1.55}
+.carta .dobra p b{color:var(--menta);font-weight:700}
+
+/* --- alternador é / não é --------------------------------- */
+.alternador{display:inline-flex;padding:5px;border:1px solid var(--borda);border-radius:999px;
+  background:var(--superf);margin-top:34px;gap:4px}
+.alternador button{padding:11px 24px;border-radius:999px;font-weight:700;font-size:.94rem;
+  color:var(--suave);transition:all .22s ease}
+.alternador button.ativo{color:#06120F;background:var(--menta);box-shadow:0 0 22px rgba(61,220,168,.45)}
+.alternador button.ativo.neg{background:var(--coral);box-shadow:0 0 22px rgba(255,138,107,.45)}
+.quadros{margin-top:28px}
+.quadro{display:none}
+.quadro.ativo{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+@media(prefers-reduced-motion:no-preference){.quadro.ativo{animation:entra .3s ease-out}}
+.item{border:1px solid var(--borda);border-left-width:3px;border-radius:10px;padding:18px 20px;
+  background:var(--superf);font-size:.97rem;line-height:1.55;color:#C6DCD5}
+.item.pos{border-left-color:var(--menta)}
+.item.neg{border-left-color:var(--coral)}
+.item b{display:block;font-weight:700;color:var(--texto);margin-bottom:.25em;letter-spacing:-.012em}
+
+/* --- destaque forte --------------------------------------- */
+.destaque-faixa{
+  border:1px solid var(--borda-forte);border-radius:20px;padding:clamp(28px,4.5vw,52px);
+  background:linear-gradient(135deg,rgba(21,185,143,.15),rgba(7,17,15,.2) 55%,rgba(255,196,90,.1));
+  box-shadow:0 0 70px rgba(21,185,143,.14) inset,0 24px 70px rgba(0,0,0,.4);
+  position:relative;overflow:hidden;
+}
+.destaque-faixa h2{max-width:22ch;line-height:1.08}
+.destaque-faixa .marca-agua{position:absolute;right:-30px;bottom:-70px;font-size:16rem;font-weight:800;
+  color:rgba(255,255,255,.022);letter-spacing:-.06em;pointer-events:none;line-height:1}
+
+/* --- abas de benefícios ----------------------------------- */
+.abas{display:flex;gap:8px;flex-wrap:wrap;margin-top:34px}
+.abas button{padding:12px 22px;border-radius:999px;border:1px solid var(--borda);
+  font-weight:600;font-size:.93rem;color:var(--suave);transition:all .2s ease}
+.abas button:hover{border-color:var(--borda-forte);color:var(--texto)}
+.abas button.ativo{color:#06120F;background:var(--menta);border-color:var(--menta);font-weight:700;
+  box-shadow:0 0 24px rgba(61,220,168,.4)}
+.lista-bnf{display:none;margin-top:28px}
+.lista-bnf.ativo{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+@media(prefers-reduced-motion:no-preference){.lista-bnf.ativo{animation:entra .3s ease-out}}
+.bnf{border:1px solid var(--borda);border-radius:var(--raio);padding:22px;background:var(--superf);
+  transition:border-color .2s ease,transform .2s ease}
+.bnf:hover{border-color:var(--borda-forte);transform:translateY(-3px)}
+.bnf h3{margin-bottom:.4em;color:var(--texto)}
+.bnf p{margin:0;font-size:.94rem;color:var(--suave);line-height:1.55}
+.bnf .ponto{width:9px;height:9px;border-radius:50%;background:var(--menta);display:block;
+  margin-bottom:14px;box-shadow:0 0 12px rgba(61,220,168,.9)}
+
+/* --- quem faz --------------------------------------------- */
+.fluxo{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:40px}
+.elo{border:1px solid var(--borda);border-radius:var(--raio);padding:22px;background:var(--superf)}
+.elo .tag{font-size:.74rem;font-weight:800;color:var(--ambar);display:block;margin-bottom:9px}
+.elo h3{margin-bottom:.4em}
+.elo p{margin:0;font-size:.93rem;color:var(--suave);line-height:1.55}
+
+.coords{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
+@media(max-width:800px){.coords{grid-template-columns:1fr}}
+.coord{border:1px solid var(--borda);border-radius:var(--raio);padding:24px;
+  background:linear-gradient(165deg,rgba(255,255,255,.05),rgba(255,255,255,.015))}
+.coord h3{font-size:1.06rem;margin-bottom:.25em}
+.coord .papel{font-size:.84rem;color:var(--menta);font-weight:600;margin:0 0 12px}
+.coord p{font-size:.93rem;color:var(--suave);line-height:1.56}
+.coord .links{display:flex;gap:18px;flex-wrap:wrap;font-size:.88rem;font-weight:600;margin:14px 0 0}
+
+/* --- perguntas -------------------------------------------- */
+.faq{margin-top:36px;display:grid;gap:10px}
+.faq details{border:1px solid var(--borda);border-radius:12px;background:var(--superf);
+  transition:border-color .2s ease}
+.faq details[open]{border-color:var(--borda-forte)}
+.faq summary{cursor:pointer;list-style:none;padding:18px 48px 18px 22px;position:relative;
+  font-weight:600;font-size:1rem;letter-spacing:-.012em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:20px;top:50%;transform:translateY(-50%);
+  color:var(--menta);font-size:1.35rem;font-weight:400;transition:transform .25s ease}
+.faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.faq .corpo{padding:0 22px 20px;color:var(--suave);font-size:.96rem;line-height:1.6}
+.faq .corpo p{margin:0}
+
+/* --- chamada final ---------------------------------------- */
+.final{text-align:center;position:relative;overflow:hidden}
+.final h2{max-width:20ch;margin:0 auto}
+.final .sub{margin:20px auto 0;text-align:center}
+.final .acoes{justify-content:center}
+.contatos{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;margin-top:38px;
+  font-size:.92rem;color:var(--suave)}
+.contatos b{display:block;color:var(--texto);font-weight:700;font-size:.8rem;margin-bottom:3px}
+
+/* --- referências ------------------------------------------ */
+.refs{counter-reset:r;list-style:none;padding:0;margin:36px 0 0;display:grid;gap:10px}
+.refs li{counter-increment:r;position:relative;padding:16px 18px 16px 52px;
+  border:1px solid rgba(130,200,180,.12);border-radius:10px;font-size:.89rem;line-height:1.55;
+  color:var(--suave);font-family:var(--serif);transition:all .3s ease}
+.refs li::before{content:counter(r);position:absolute;left:16px;top:15px;width:24px;height:24px;
+  border-radius:6px;background:rgba(61,220,168,.14);color:var(--menta);font-family:var(--sans);
+  font-size:.76rem;font-weight:800;display:grid;place-items:center}
+.refs li:target{border-color:var(--menta);background:rgba(61,220,168,.07);
+  box-shadow:0 0 0 1px rgba(61,220,168,.3),0 0 34px rgba(61,220,168,.18)}
+.refs li a{word-break:break-word}
+
+/* --- rodapé ----------------------------------------------- */
+.rodape{border-top:1px solid rgba(130,200,180,.12);padding:40px 0 56px;color:var(--suave);font-size:.86rem}
+.rodape-grade{display:flex;gap:36px;flex-wrap:wrap;justify-content:space-between;line-height:1.7}
+.rodape b{display:block;color:var(--texto);font-weight:700;margin-bottom:3px}
+
+/* --- revelação ao rolar ----------------------------------- */
+@media(prefers-reduced-motion:no-preference){
+  .revela{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.3,1)}
+  .revela.visivel{opacity:1;transform:none}
+}
+.pular{position:absolute;left:-9999px}
+.pular:focus{left:12px;top:12px;z-index:70;background:var(--menta);color:#06120F;padding:10px 16px;border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="progresso" id="progresso"></div>
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+
+<header class="topo">
+  <div class="wrap topo-in">
+    <a class="marca" href="#">
+      <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="11" fill="none" stroke="#3DDCA8" stroke-width="2.6"/>
+        <circle cx="16" cy="5" r="3.6" fill="#FFC45A"/>
+      </svg>
+      <span class="nome">Quem Cuida do Cuidador</span>
+    </a>
+    <nav class="menu" aria-label="Seções">
+      <a href="#rotina">A rotina</a>
+      <a href="#ciclo">O método</a>
+      <a href="#escopo">Escopo</a>
+      <a href="#beneficios">Benefícios</a>
+      <a href="#equipe">Quem faz</a>
+      <a href="#perguntas">Perguntas</a>
+      <a class="destaque" href="#contato">Falar com a UEL</a>
+    </nav>
+  </div>
+</header>
+
+<main id="conteudo">
+
+<!-- ===================== HERÓI ===================== -->
+<section class="heroi" id="heroi">
+  <div class="brilho b1"></div>
+  <div class="brilho b2"></div>
+  <div class="wrap heroi-grade">
+    <div>
+      <span class="selo"><i></i>Projeto de extensão UEL + ELO Empresa Júnior de Psicologia</span>
+      <h1><span class="titulo-brilho">Quem cuida do cuidador</span></h1>
+      <p class="linha-chamada">O desgaste da clínica veterinária tem causa no ambiente de trabalho. Nós medimos essa causa, mexemos nela e medimos de novo.<a class="ref" href="#r7">7</a></p>
+      <div class="acoes">
+        <a class="botao botao-forte" href="#contato">Quero essa parceria</a>
+        <a class="botao botao-leve" href="#ciclo">Ver o método</a>
+      </div>
+      <div class="fatos">
+        <span class="fato"><b>Sem custo</b> para a clínica</span>
+        <span class="fato"><b>Até 36 meses</b> em ciclos anuais</span>
+        <span class="fato"><b>Entra no PGR</b> como risco psicossocial<a class="ref" href="#r2">2</a></span>
+      </div>
+    </div>
+
+    <!-- Ciclo: clicável, sincronizado com o painel da seção do método -->
+    <div>
+      <svg class="ciclo-svg" id="ciclo-heroi" viewBox="0 0 380 380" role="img" aria-label="Ciclo: observar, intervir e medir de novo">
+        <circle class="trilho" cx="190" cy="190" r="105"/>
+        <circle class="arco" cx="190" cy="190" r="105"/>
+        <g class="no ativo" data-passo="0">
+          <circle cx="190" cy="85" r="17"/><text x="190" y="90" text-anchor="middle">1</text>
+          <text class="rot" x="190" y="54" text-anchor="middle">Observar</text>
+        </g>
+        <g class="no" data-passo="1">
+          <circle cx="280.9" cy="242.5" r="17"/><text x="280.9" y="247.5" text-anchor="middle">2</text>
+          <text class="rot" x="306" y="248" text-anchor="start">Intervir</text>
+        </g>
+        <g class="no" data-passo="2">
+          <circle cx="99.1" cy="242.5" r="17"/><text x="99.1" y="247.5" text-anchor="middle">3</text>
+          <text class="rot" x="74" y="248" text-anchor="end">Medir de novo</text>
+        </g>
+        <text class="miolo" x="190" y="184" text-anchor="middle">uma intervenção</text>
+        <text class="miolo" x="190" y="203" text-anchor="middle">pequena por vez</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== A ROTINA ===================== -->
+<section class="secao" id="rotina">
+  <div class="brilho b3"></div>
+  <div class="wrap">
+    <div class="revela">
+      <p class="rotulo">O que pesa na rotina</p>
+      <h2>Clique no que acontece na sua clínica</h2>
+      <p class="sub">Nenhum destes itens é falha de vocação. São contingências do serviço veterinário, descritas na literatura da área.<a class="ref" href="#r3">3</a><a class="ref" href="#r5">5</a></p>
+    </div>
+
+    <div class="mapa revela">
+      <button class="carta" aria-expanded="false">
+        <h3>Eutanásia e luto<span class="mais">+</span></h3>
+        <div class="dobra"><div><p>Decidir, executar e seguir atendendo no mesmo turno. <b>No projeto:</b> protocolo para os minutos seguintes e para como a equipe encerra o caso.<a class="ref" href="#r4">4</a></p></div></div>
+      </button>
+      <button class="carta" aria-expanded="false">
+        <h3>Tutor em conflito<span class="mais">+</span></h3>
+        <div class="dobra"><div><p>A cobrança do tutor sobrecarregado volta como pressão sobre o profissional.<a class="ref" href="#r6">6</a> <b>No projeto:</b> ajuste de como a notícia difícil é comunicada e de quem comunica.</p></div></div>
+      </button>
+      <button class="carta" aria-expanded="false">
+        <h3>Maus-tratos e abandono<span class="mais">+</span></h3>
+        <div class="dobra"><div><p>O animal chega e a decisão fica com a casa. <b>No projeto:</b> mapeamento de quanto isso ocorre e de quem absorve o custo emocional dentro da equipe.<a class="ref" href="#r3">3</a></p></div></div>
+      </button>
+      <button class="carta" aria-expanded="false">
+        <h3>Escala e plantão<span class="mais">+</span></h3>
+        <div class="dobra"><div><p>Casos pesados mal distribuídos concentram desgaste em poucas pessoas. <b>No projeto:</b> análise do fluxo com instrumentos de OBM e BSA.<a class="ref" href="#r7">7</a></p></div></div>
+      </button>
+      <button class="carta" aria-expanded="false">
+        <h3>Recepção na linha de frente<span class="mais">+</span></h3>
+        <div class="dobra"><div><p>Quem atende primeiro recebe a reação primeiro, e quase nunca entra nos programas de cuidado. <b>No projeto:</b> todos os cargos participam, da secretaria à direção técnica.</p></div></div>
+      </button>
+      <button class="carta" aria-expanded="false">
+        <h3>Silêncio sobre o próprio sofrimento<span class="mais">+</span></h3>
+        <div class="dobra"><div><p>A crise de saúde mental na profissão chegou ao noticiário antes de chegar aos protocolos.<a class="ref" href="#r1">1</a> <b>No projeto:</b> escuta conduzida por quem não decide sobre a carreira de ninguém.</p></div></div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ESCOPO ===================== -->
+<section class="secao" id="escopo">
+  <div class="wrap">
+    <div class="destaque-faixa revela">
+      <span class="marca-agua" aria-hidden="true">escopo</span>
+      <p class="rotulo">Escopo</p>
+      <h2>Não é consultório dentro da clínica. É segurança em saúde mental do trabalhador.</h2>
+      <p class="sub">A diferença muda quem assina, quem participa e o que a equipe espera. Alterne os dois lados.</p>
+
+      <div class="alternador" role="tablist" aria-label="Escopo do projeto">
+        <button role="tab" id="aba-eh" aria-controls="q-eh" aria-selected="true" class="ativo" data-quadro="eh">O que é</button>
+        <button role="tab" id="aba-nao" aria-controls="q-nao" aria-selected="false" class="neg" data-quadro="nao">O que não é</button>
+      </div>
+
+      <div class="quadros">
+        <div class="quadro ativo" id="q-eh" role="tabpanel" aria-labelledby="aba-eh">
+          <div class="item pos"><b>Intervenção de segurança</b>Risco psicossocial tratado como se trata risco biológico: protocolo, registro, revisão.<a class="ref" href="#r2">2</a></div>
+          <div class="item pos"><b>Mapeamento local</b>Aquela clínica, aquela equipe, aquele fluxo. Nada importado de fora.</div>
+          <div class="item pos"><b>Protótipos pequenos</b>Uma mudança reversível por vez, com critério de avaliação definido antes.<a class="ref" href="#r7">7</a></div>
+          <div class="item pos"><b>Protocolo que fica</b>Escrito, construído junto, funcionando depois que o projeto sai.</div>
+          <div class="item pos"><b>Processo aberto</b>A equipe vê os dados e ajuda a escolher o que será testado.</div>
+          <div class="item pos"><b>Participação voluntária</b>TCLE assinado, com direito de sair a qualquer momento.</div>
+        </div>
+        <div class="quadro" id="q-nao" role="tabpanel" aria-labelledby="aba-nao" hidden>
+          <div class="item neg"><b>Não é terapia</b>Sem atendimento psicoterápico ou acompanhamento clínico individual da equipe.</div>
+          <div class="item neg"><b>Não é avaliação de desempenho</b>Nada do que é dito nas entrevistas vira insumo para decisão sobre pessoas.</div>
+          <div class="item neg"><b>Não é palestra motivacional</b>Sem dinâmica de integração e sem discurso de resiliência individual.</div>
+          <div class="item neg"><b>Não é pacote pronto</b>Nenhuma intervenção entra antes de existir medida que a justifique.</div>
+          <div class="item neg"><b>Não é diagnóstico</b>Ninguém sai rotulado, e nenhum laudo é produzido.</div>
+          <div class="item neg"><b>Não é relatório para a chefia</b>O conteúdo individual é sigiloso; volta só o quadro agregado.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== O MÉTODO ===================== -->
+<section class="secao" id="ciclo">
+  <div class="wrap">
+    <div class="revela">
+      <p class="rotulo">O método</p>
+      <h2>Observar, intervir, medir de novo</h2>
+      <p class="sub">Vem do Organizational Behavior Management e da Behavioral Systems Analysis.<a class="ref" href="#r7">7</a> Nenhuma mudança é proposta sem medida, e nenhuma é mantida sem nova medida.</p>
+    </div>
+
+    <div class="ciclo-grade revela">
+      <svg class="ciclo-svg" id="ciclo-metodo" viewBox="0 0 380 380" role="img" aria-label="Ciclo do método, com três etapas selecionáveis">
+        <circle class="trilho" cx="190" cy="190" r="105"/>
+        <circle class="arco" cx="190" cy="190" r="105"/>
+        <g class="no ativo" data-passo="0" tabindex="0" role="button" aria-label="Etapa 1, observar">
+          <circle cx="190" cy="85" r="17"/><text x="190" y="90" text-anchor="middle">1</text>
+          <text class="rot" x="190" y="54" text-anchor="middle">Observar</text>
+        </g>
+        <g class="no" data-passo="1" tabindex="0" role="button" aria-label="Etapa 2, intervir">
+          <circle cx="280.9" cy="242.5" r="17"/><text x="280.9" y="247.5" text-anchor="middle">2</text>
+          <text class="rot" x="306" y="248" text-anchor="start">Intervir</text>
+        </g>
+        <g class="no" data-passo="2" tabindex="0" role="button" aria-label="Etapa 3, medir de novo">
+          <circle cx="99.1" cy="242.5" r="17"/><text x="99.1" y="247.5" text-anchor="middle">3</text>
+          <text class="rot" x="74" y="248" text-anchor="end">Medir de novo</text>
+        </g>
+        <text class="miolo" x="190" y="184" text-anchor="middle">clique em</text>
+        <text class="miolo" x="190" y="203" text-anchor="middle">cada etapa</text>
+      </svg>
+
+      <div class="painel" id="painel">
+        <div class="passo ativo" data-passo="0">
+          <span class="passo-num">Etapa 1</span>
+          <h3>Observar</h3>
+          <p>Entrevistas com toda a equipe e observação direta da rotina, em horários combinados. O alvo são situações concretas, não satisfação em abstrato.</p>
+          <ul>
+            <li>Entrevistas de escuta, individuais ou em pequenos grupos</li>
+            <li>Observação participante com instrumento estruturado</li>
+            <li>Registro sistemático, com sigilo e consentimento</li>
+            <li>Primeira devolutiva à equipe antes de qualquer mudança</li>
+          </ul>
+        </div>
+        <div class="passo" data-passo="1">
+          <span class="passo-num">Etapa 2</span>
+          <h3>Intervir em pequena escala</h3>
+          <p>Um protótipo por vez, escolhido com a equipe entre as demandas que apareceram, com critério de avaliação definido antes de começar.<a class="ref" href="#r4">4</a></p>
+          <ul>
+            <li>Mudança reversível, do tamanho da rotina real</li>
+            <li>Proposta sempre acompanhada da referência que a sustenta</li>
+            <li>Desenhada para funcionar com a clínica cheia</li>
+            <li>A equipe sabe o que está sendo testado e por quê</li>
+          </ul>
+        </div>
+        <div class="passo" data-passo="2">
+          <span class="passo-num">Etapa 3</span>
+          <h3>Medir de novo</h3>
+          <p>A mesma medida de antes, aplicada depois. Delineamento de sujeito único: a clínica é comparada consigo mesma.</p>
+          <ul>
+            <li>O que sustenta melhora entra no protocolo da casa</li>
+            <li>O que não sustenta é descartado, com o motivo registrado</li>
+            <li>Os protótipos aprovados se somam e formam o pacote</li>
+            <li>O ciclo recomeça com a próxima demanda da fila</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FADIGA POR COMPAIXÃO ===================== -->
+<section class="secao" id="fadiga">
+  <div class="wrap">
+    <div class="destaque-faixa revela">
+      <span class="marca-agua" aria-hidden="true">fadiga</span>
+      <p class="rotulo">Primeira linha de trabalho</p>
+      <h2>Fadiga por compaixão</h2>
+      <p class="sub">O esgotamento de quem cuida: exposição repetida ao sofrimento do animal e do tutor, com recursos limitados e sem lugar para processar.</p>
+      <div class="quadro ativo" style="margin-top:28px">
+        <div class="item pos"><b>Não é burnout</b>Burnout vem da carga e da estrutura. Fadiga por compaixão vem do custo de responder ao sofrimento alheio.</div>
+        <div class="item pos"><b>Tem forma própria na veterinária</b>Cobrança por um cuidado que o orçamento não autoriza; responsabilização pela morte que se recomendou para evitar sofrimento.<a class="ref" href="#r5">5</a></div>
+        <div class="item pos"><b>Já existe o que testar</b>Rohlf revisou sistematicamente as intervenções aplicadas a profissionais de cuidado animal.<a class="ref" href="#r4">4</a> Falta implementação sistemática no serviço.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BENEFÍCIOS ===================== -->
+<section class="secao" id="beneficios">
+  <div class="wrap">
+    <div class="revela">
+      <p class="rotulo">O que a parceria prevê entregar</p>
+      <h2>Benefícios previstos</h2>
+      <p class="sub">Resultados esperados e acompanhados por medida, não garantias. Cada um tem indicador combinado no início e aparece na devolutiva com o número encontrado.</p>
+
+      <div class="abas" role="tablist" aria-label="Benefícios">
+        <button role="tab" class="ativo" id="aba-gestao" aria-controls="b-gestao" aria-selected="true" data-aba="gestao">Para a gestão</button>
+        <button role="tab" id="aba-equipe" aria-controls="b-equipe" aria-selected="false" data-aba="equipe">Para a equipe</button>
+      </div>
+    </div>
+
+    <div class="lista-bnf ativo" id="b-gestao" role="tabpanel" aria-labelledby="aba-gestao">
+      <div class="bnf"><span class="ponto"></span><h3>Risco psicossocial documentado</h3><p>Inventário com método declarado e registro, no formato que o PGR passou a exigir.<a class="ref" href="#r2">2</a></p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Protocolo próprio, escrito</h3><p>O que foi testado, o que sustentou melhora e como repetir. Patrimônio da casa, não um serviço do qual ela passa a depender.</p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Apoio à retenção</h3><p>Rotatividade custa seleção, treinamento e tempo de quem fica. Mexer nas condições que fazem alguém sair é intervenção de custo.</p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Relatório técnico-científico</h3><p>Dados, método e recomendações, úteis para decisão interna e para prestação de contas.</p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Vínculo com universidade pública</h3><p>A clínica aparece como coautora de uma tecnologia em desenvolvimento, em publicações e eventos, se assim desejar.</p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Sem custo financeiro</h3><p>A contrapartida é espaço físico, apoio logístico e disponibilidade da equipe nos horários combinados.</p></div>
+    </div>
+
+    <div class="lista-bnf" id="b-equipe" role="tabpanel" aria-labelledby="aba-equipe" hidden>
+      <div class="bnf"><span class="ponto"></span><h3>Lugar para dizer o que pesa</h3><p>Entrevista com sigilo, conduzida por quem não é da hierarquia da clínica.</p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Mexe na condição, não na pessoa</h3><p>O alvo é a rotina: escala, fluxo, comunicação, apoio. O desgaste não volta como falha pessoal de resiliência.</p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Participação na decisão</h3><p>Os dados voltam para a equipe reunida, e é a equipe que ajuda a escolher o próximo protótipo.</p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Repertório que fica</h3><p>Manejo de estresse e práticas de atenção plena aplicadas ao contexto de trabalho, ajustadas ao que cabe no turno.<a class="ref" href="#r4">4</a></p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Mesma informação para todos</h3><p>Todos veem o mesmo resultado, ao mesmo tempo. Não há relatório paralelo para a chefia.</p></div>
+      <div class="bnf"><span class="ponto"></span><h3>Saída livre</h3><p>Participação voluntária, com TCLE e direito de sair em qualquer momento, sem efeito sobre o vínculo de trabalho.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUEM FAZ ===================== -->
+<section class="secao" id="equipe">
+  <div class="wrap">
+    <div class="revela">
+      <p class="rotulo">Quem faz</p>
+      <h2>Estudantes em campo, docentes na supervisão</h2>
+      <p class="sub">A ELO organiza o trabalho pela lógica de Pesquisa, Desenvolvimento e Inovação: a demanda da clínica é tratada como problema a investigar, e a solução que funciona vira protocolo replicável.</p>
+    </div>
+
+    <div class="fluxo revela">
+      <div class="elo"><span class="tag">Em campo</span><h3>Equipe da ELO</h3><p>Estagiários, extensionistas e pesquisadores de graduação e pós-graduação conduzem entrevistas, observação e registros dentro da clínica.</p></div>
+      <div class="elo"><span class="tag">Responsabilidade</span><h3>Supervisão docente</h3><p>Docentes da UEL vinculados à ELO e professores parceiros respondem pelo método, pela ética e pelo treinamento da equipe.</p></div>
+      <div class="elo"><span class="tag">Decisão</span><h3>Reuniões de dados</h3><p>Os registros são analisados em grupo e cada proposta vai a campo com a referência interdisciplinar que a sustenta.</p></div>
+      <div class="elo"><span class="tag">Composição</span><h3>Interdisciplinar</h3><p>Além da Psicologia, o projeto prevê discentes de Medicina Veterinária, Biologia e Jornalismo, com carga horária definida.</p></div>
+    </div>
+
+    <div class="coords revela">
+      <div class="coord">
+        <h3>Prof. Dr. Hernando Borges Neves Filho</h3>
+        <p class="papel">Coordenação · PGAC e PPGAC-UEL · CRIACOM</p>
+        <p>Doutor em Psicologia Experimental (USP), com doutorado-sanduíche em Auckland e dois pós-doutorados. Desenvolve tecnologias comportamentais para resolução de problemas em saúde e educação. Pesquisador convidado do Programa de Combate à Desinformação do STF.</p>
+        <p class="links"><a href="mailto:hernando@uel.br">hernando@uel.br</a><a href="http://lattes.cnpq.br/2700793023719116">Lattes</a></p>
+      </div>
+      <div class="coord">
+        <h3>Profa. Dra. Yulla Christoffersen Knaus</h3>
+        <p class="papel">Coordenação · PGAC-UEL · CRIACOM</p>
+        <p>Doutora em Neurociências e Comportamento (USP), com período na Universität Regensburg estudando ansiedade, hormônios do estresse e resolução de problemas. Experiência em farmacologia e endocrinologia comportamental.</p>
+        <p class="links"><a href="mailto:knaus@uel.br">knaus@uel.br</a><a href="http://lattes.cnpq.br/4931833088935716">Lattes</a></p>
+      </div>
+    </div>
+    <p class="sub revela" style="margin-top:22px">Os dois são signatários da <a href="https://sites.google.com/nyu.edu/nydeclaration/declaration">New York Declaration on Animal Consciousness</a>, que reúne cientistas com contribuições reconhecidas sobre comportamento animal.</p>
+  </div>
+</section>
+
+<!-- ===================== PERGUNTAS ===================== -->
+<section class="secao" id="perguntas">
+  <div class="wrap">
+    <div class="revela">
+      <p class="rotulo">Antes de assinar</p>
+      <h2>O que a gestão pergunta</h2>
+    </div>
+    <div class="faq revela">
+      <details><summary>Quanto custa?</summary><div class="corpo"><p>Nada em dinheiro. O custo real a considerar é o tempo da equipe nos horários combinados.</p></div></details>
+      <details><summary>O atendimento vai parar?</summary><div class="corpo"><p>Não. A observação é da rotina como ela é, as entrevistas cabem na escala e os protótipos são desenhados para o fluxo existente. Intervenção que só funciona com a clínica vazia não serve.</p></div></details>
+      <details><summary>Quem vê o que minha equipe disse?</summary><div class="corpo"><p>O conteúdo individual fica com a equipe do projeto, sob sigilo. Para a clínica volta o quadro agregado: quais situações aparecem, o que têm em comum e o que a literatura sugere fazer.</p></div></details>
+      <details><summary>E quem não quiser participar?</summary><div class="corpo"><p>Não participa. Participação sob pressão invalida o dado e piora o ambiente que se pretende melhorar.</p></div></details>
+      <details><summary>Isso é terapia para a equipe?</summary><div class="corpo"><p>Não. Demanda que exija cuidado clínico individual é encaminhada pelos canais apropriados, fora do projeto.</p></div></details>
+      <details><summary>Quanto tempo até aparecer resultado?</summary><div class="corpo"><p>A primeira devolutiva sai do mapeamento inicial. Os protótipos vêm depois, em ciclos curtos com medida antes e depois. O desenho vai até 36 meses, em ciclos anuais que incorporam o aprendizado do anterior.</p></div></details>
+      <details><summary>Minha clínica é pequena. Faz sentido?</summary><div class="corpo"><p>Faz. O delineamento compara a clínica consigo mesma, não com a média de outras. Equipes pequenas costumam dar ciclos mais rápidos.</p></div></details>
+      <details><summary>Quem responde pela formalização?</summary><div class="corpo"><p>A coordenação docente da UEL, via Pró-Reitoria de Extensão, Cultura e Sociedade (Resolução CEPE 70/2012), com a ELO Empresa Júnior de Psicologia na execução.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTATO ===================== -->
+<section class="secao final" id="contato">
+  <div class="brilho b2" style="left:50%;transform:translateX(-50%);top:-120px;right:auto"></div>
+  <div class="wrap revela">
+    <p class="rotulo" style="justify-content:center">Próximo passo</p>
+    <h2>Uma conversa de uma hora resolve a maior parte das dúvidas</h2>
+    <p class="sub">Apresentamos o desenho, ouvimos como funciona a sua rotina e avaliamos juntos se faz sentido seguir. Sem compromisso, e nada começa antes de a equipe saber o que vai acontecer.</p>
+    <div class="acoes">
+      <a class="botao botao-forte" href="mailto:hernando@uel.br?subject=Parceria%20Quem%20Cuida%20do%20Cuidador&amp;body=Nome%20da%20cl%C3%ADnica%3A%0ACidade%3A%0ATamanho%20da%20equipe%3A%0AMelhor%20hor%C3%A1rio%20para%20conversar%3A%0A%0AO%20que%20mais%20pesa%20na%20rotina%20hoje%3A">Escrever para a coordenação</a>
+      <a class="botao botao-leve" href="#referencias">Ver a base bibliográfica</a>
+    </div>
+    <div class="contatos">
+      <div><b>Coordenação</b>hernando@uel.br<br>knaus@uel.br</div>
+      <div><b>Execução</b>PGAC e PPGAC-UEL<br>ELO Empresa Júnior de Psicologia</div>
+      <div><b>Apoio</b>Centro de Ciências Biológicas<br>PROEX-UEL</div>
+      <div><b>Enquadramento</b>Extensão, Resolução CEPE 70/2012<br>Área temática 45</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== REFERÊNCIAS ===================== -->
+<section class="secao" id="referencias" style="padding-top:0">
+  <div class="wrap">
+    <div class="revela">
+      <p class="rotulo">Base bibliográfica</p>
+      <h2 style="font-size:clamp(1.5rem,3vw,2.1rem)">De onde vêm as afirmações desta página</h2>
+    </div>
+    <ol class="refs revela">
+      <li id="r1">BBC News Brasil. A crise de saúde mental que leva tantos veterinários ao suicídio. Novembro de 2024. <a href="https://www.bbc.com/portuguese/articles/cew1w7ew9y8o">bbc.com/portuguese/articles/cew1w7ew9y8o</a></li>
+      <li id="r2">BRASIL. Ministério do Trabalho e Emprego. Norma Regulamentadora nº 1, disposições gerais e gerenciamento de riscos ocupacionais. Atualização que inclui os fatores de risco psicossocial no inventário de riscos e no plano de ação do PGR, com exigência em vigor desde maio de 2026.</li>
+      <li id="r3">RIVA, M. E. A.; BERNI, L. B. Saúde mental dos profissionais da medicina veterinária: relato de experiência. <i>Brazilian Journal of Development</i>, v. 11, n. 4, p. 1-11, 2025. <a href="https://doi.org/10.34117/bjdv11n4-018">doi.org/10.34117/bjdv11n4-018</a></li>
+      <li id="r4">ROHLF, V. I. Interventions for occupational stress and compassion fatigue in animal care professionals: a systematic review. <i>Traumatology</i>, v. 24, n. 3, p. 186-192, 2018. <a href="https://doi.org/10.1037/trm0000144">doi.org/10.1037/trm0000144</a></li>
+      <li id="r5">SIESS, S.; MARZILIANO, A.; SARMA, E. A.; SIKORSKI, L. E.; MOYER, A. Why psychology matters in veterinary medicine. <i>Topics in Companion Animal Medicine</i>, v. 30, n. 2, p. 43-47, 2015. <a href="https://doi.org/10.1053/j.tcam.2015.05.001">doi.org/10.1053/j.tcam.2015.05.001</a></li>
+      <li id="r6">SPITZNAGEL, M. B.; CARLSON, M. D. Caregiver burden and veterinary client well-being. <i>Veterinary Clinics of North America: Small Animal Practice</i>, v. 49, n. 3, p. 431-444, 2019. <a href="https://doi.org/10.1016/j.cvsm.2019.01.008">doi.org/10.1016/j.cvsm.2019.01.008</a></li>
+      <li id="r7">VILAS BOAS, D. L. O.; CASSAS, F.; GUSSO, H. L. (orgs.). <i>Comportamento em Foco: OBM e BSA, análise do comportamento nas organizações</i>. São Paulo: ABPMC, 2017. ISBN 978-85-65768-04-7.</li>
+    </ol>
+  </div>
+</section>
+
+</main>
+
+<footer class="rodape">
+  <div class="wrap rodape-grade">
+    <div><b>Quem Cuida do Cuidador</b>Escuta e cuidado psicológico em clínicas veterinárias<br>Projeto de extensão universitária da UEL</div>
+    <div><b>CRIACOM</b>Criatividade &amp; Comportamento<br>Universidade Estadual de Londrina</div>
+    <div><b>Execução</b>ELO Empresa Júnior de Psicologia da UEL<br>Pesquisa, Desenvolvimento e Inovação</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var paradoMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* --- barra de progresso de leitura --- */
+  var barra = document.getElementById("progresso");
+  function progresso(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    barra.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", progresso, {passive:true});
+  progresso();
+
+  /* --- foco que acompanha o ponteiro no herói --- */
+  var heroi = document.getElementById("heroi");
+  if (heroi && !paradoMovimento && window.matchMedia("(hover:hover)").matches){
+    heroi.addEventListener("pointermove", function(e){
+      var r = heroi.getBoundingClientRect();
+      heroi.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100) + "%");
+      heroi.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100) + "%");
+    });
+  }
+
+  /* --- ciclo: os dois SVGs e o painel ficam sincronizados --- */
+  var angulos = [-90, 30, 150];
+  var svgs = [document.getElementById("ciclo-heroi"), document.getElementById("ciclo-metodo")].filter(Boolean);
+  var painel = document.getElementById("painel");
+
+  function mostrarPasso(i){
+    svgs.forEach(function(svg){
+      svg.querySelectorAll(".no").forEach(function(g){
+        g.classList.toggle("ativo", Number(g.dataset.passo) === i);
+      });
+      var arco = svg.querySelector(".arco");
+      if (arco) arco.style.transform = "rotate(" + angulos[i] + "deg)";
+    });
+    if (painel){
+      painel.querySelectorAll(".passo").forEach(function(p){
+        p.classList.toggle("ativo", Number(p.dataset.passo) === i);
+      });
+    }
+  }
+  svgs.forEach(function(svg){
+    svg.querySelectorAll(".no").forEach(function(g){
+      g.addEventListener("click", function(){ mostrarPasso(Number(g.dataset.passo)); });
+      g.addEventListener("keydown", function(e){
+        if (e.key === "Enter" || e.key === " "){ e.preventDefault(); mostrarPasso(Number(g.dataset.passo)); }
+      });
+    });
+  });
+
+  /* --- avanço automático do ciclo enquanto ninguém interage --- */
+  if (!paradoMovimento){
+    var passoAtual = 0, automatico = true;
+    var relogio = setInterval(function(){
+      if (!automatico) { clearInterval(relogio); return; }
+      passoAtual = (passoAtual + 1) % 3;
+      mostrarPasso(passoAtual);
+    }, 4200);
+    svgs.forEach(function(svg){
+      svg.addEventListener("click", function(){ automatico = false; });
+      svg.addEventListener("keydown", function(){ automatico = false; });
+    });
+  }
+
+  /* --- cartas da rotina: abre uma por vez --- */
+  document.querySelectorAll(".carta").forEach(function(c){
+    c.addEventListener("pointermove", function(e){
+      var r = c.getBoundingClientRect();
+      c.style.setProperty("--cx", (e.clientX - r.left) + "px");
+      c.style.setProperty("--cy", (e.clientY - r.top) + "px");
+    });
+    c.addEventListener("click", function(){
+      var abrindo = !c.classList.contains("aberta");
+      document.querySelectorAll(".carta.aberta").forEach(function(o){
+        o.classList.remove("aberta"); o.setAttribute("aria-expanded","false");
+      });
+      c.classList.toggle("aberta", abrindo);
+      c.setAttribute("aria-expanded", abrindo ? "true" : "false");
+    });
+  });
+
+  /* --- alternador é / não é --- */
+  document.querySelectorAll(".alternador button").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll(".alternador button").forEach(function(o){
+        o.classList.remove("ativo"); o.setAttribute("aria-selected","false");
+      });
+      b.classList.add("ativo"); b.setAttribute("aria-selected","true");
+      var alvo = b.dataset.quadro === "eh" ? "q-eh" : "q-nao";
+      ["q-eh","q-nao"].forEach(function(id){
+        var q = document.getElementById(id);
+        q.classList.toggle("ativo", id === alvo);
+        q.hidden = (id !== alvo);
+      });
+    });
+  });
+
+  /* --- abas de benefícios --- */
+  document.querySelectorAll(".abas button").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll(".abas button").forEach(function(o){
+        o.classList.remove("ativo"); o.setAttribute("aria-selected","false");
+      });
+      b.classList.add("ativo"); b.setAttribute("aria-selected","true");
+      var alvo = "b-" + b.dataset.aba;
+      ["b-gestao","b-equipe"].forEach(function(id){
+        var l = document.getElementById(id);
+        l.classList.toggle("ativo", id === alvo);
+        l.hidden = (id !== alvo);
+      });
+    });
+  });
+
+  /* --- revelação ao rolar --- */
+  if (!paradoMovimento && "IntersectionObserver" in window){
+    var obs = new IntersectionObserver(function(ents){
+      ents.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add("visivel"); obs.unobserve(e.target); }
+      });
+    }, {threshold:.12, rootMargin:"0px 0px -8% 0px"});
+    document.querySelectorAll(".revela").forEach(function(el){ obs.observe(el); });
+  } else {
+    document.querySelectorAll(".revela").forEach(function(el){ el.classList.add("visivel"); });
+  }
+})();
+</script>
+</body>
+</html>
